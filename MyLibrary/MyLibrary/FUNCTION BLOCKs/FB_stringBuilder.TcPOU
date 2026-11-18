@@ -1,0 +1,331 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="FB_stringBuilder" Id="{26bce644-87e4-4374-b58f-9389bc582a26}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_stringBuilder
+VAR_INPUT
+END_VAR
+VAR
+	bBuffer				:	ARRAY[0..PARAMETERS.uiMaxCharacters - 1] OF BYTE;
+	bBufferOld			:	ARRAY[0..PARAMETERS.uiMaxCharacters - 1] OF BYTE;
+	udiIndex			:	UDINT;
+	udiIndexOld			:	UDINT;
+	pbBuffer			:	POINTER TO BYTE		:=	ADR(bBuffer);
+	pbBufferOld			:	POINTER TO BYTE		:=	ADR(bBufferOld);
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Folder Name="ACTIONs" Id="{99776992-d8a0-4ed4-aa61-350cfed19f86}" />
+    <Folder Name="METHODs" Id="{9a2113b2-3380-4328-be6b-be03ed0cc5a6}" />
+    <Method Name="AddChar" Id="{acb1b8e0-0207-4f46-8378-b68a295cf363}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD AddChar : BOOL
+VAR_INPUT
+	byChar	:	BYTE;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF CheckLength THEN
+	bBuffer[udiIndex]	:=	byChar;
+	AddChar			:=	TRUE;
+	IncrementIndex();
+END_IF
+
+
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Action Name="AddCloseBracket" Id="{444bcdd4-ba94-4df4-ab4d-d2ec81607a8f}" FolderPath="ACTIONs\">
+      <Implementation>
+        <ST><![CDATA[AddChar(41);]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="AddColon" Id="{955d0969-09fd-4ef7-a5fc-925f1bf3fba6}" FolderPath="ACTIONs\">
+      <Implementation>
+        <ST><![CDATA[AddChar(58);]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="AddComma" Id="{f598045d-14ce-4e49-8860-6889173f446b}" FolderPath="ACTIONs\">
+      <Implementation>
+        <ST><![CDATA[AddChar(44);]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="AddDollar" Id="{62dc17c3-04a8-45e3-b384-0493539ef6bb}" FolderPath="ACTIONs\">
+      <Implementation>
+        <ST><![CDATA[AddChar(36);]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="AddDot" Id="{e44675ea-41f7-4475-a1a8-be67ad3f2ca2}" FolderPath="ACTIONs\">
+      <Implementation>
+        <ST><![CDATA[AddChar(46);]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="AddDoubleQuote" Id="{634a5359-7116-406e-b4c1-826d6bf2f6c9}" FolderPath="ACTIONs\">
+      <Implementation>
+        <ST><![CDATA[AddChar(34);]]></ST>
+      </Implementation>
+    </Action>
+    <Method Name="AddKeyValue" Id="{ea0220f5-ed5d-41e8-9b72-147e94feed33}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD AddKeyValue : BOOL
+VAR_INPUT
+	psKey	:	POINTER TO STRING;
+	psValue	:	POINTER TO STRING;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[AddString(psKey);
+AddColon();
+AddString(psValue);
+AddComma();]]></ST>
+      </Implementation>
+    </Method>
+    <Action Name="AddNewLine" Id="{c2c363a3-f640-4a66-9c2e-ae6cfdf7030a}" FolderPath="ACTIONs\">
+      <Implementation>
+        <ST><![CDATA[AddChar(10);]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="AddNullChar" Id="{41965dbb-6995-4e5e-9350-33895695746a}" FolderPath="ACTIONs\">
+      <Implementation>
+        <ST><![CDATA[IF NOT CheckLength() THEN
+	udiIndex	:=	PARAMETERS.uiMaxCharacters - 1;
+END_IF
+AddChar(0);]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="AddOpenBracket" Id="{2ec56027-8c0a-434b-a7a8-c83c4f1f8e42}" FolderPath="ACTIONs\">
+      <Implementation>
+        <ST><![CDATA[AddChar(40);]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="AddQuote" Id="{a0d24b89-7c31-4ef3-9361-6e66114a55e2}" FolderPath="ACTIONs\">
+      <Implementation>
+        <ST><![CDATA[AddChar(39);]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="AddSemicolon" Id="{6e821915-2f2b-48e5-a2be-50c5a41a7f62}" FolderPath="ACTIONs\">
+      <Implementation>
+        <ST><![CDATA[AddChar(59);]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="AddSpace" Id="{efb50eb6-39f2-45ad-afb8-a2137592de0e}" FolderPath="ACTIONs\">
+      <Implementation>
+        <ST><![CDATA[AddChar(32);]]></ST>
+      </Implementation>
+    </Action>
+    <Method Name="AddString" Id="{595b4d96-b597-449d-9435-3e7e82a579a8}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD AddString : BOOL
+VAR_INPUT
+	psString		:	POINTER TO STRING;
+END_VAR
+VAR
+	udiLen	:	UDINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[udiLen	:=	(LEN2(psString));
+IF CheckFinalLength(udiLen) THEN
+	MEMCPY(pbBuffer + udiIndex, psString, udiLen);
+	IncrementIndexVariable(udiLen);
+	AddString	:=	TRUE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Action Name="AddTab" Id="{ee6a5a98-72fa-4ae6-9474-04a98b339a88}" FolderPath="ACTIONs\">
+      <Implementation>
+        <ST><![CDATA[AddChar(9);]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="AddUnderscore" Id="{f615e6a0-0dc8-4c8e-8542-2fb8926efc44}" FolderPath="ACTIONs\">
+      <Implementation>
+        <ST><![CDATA[AddChar(95);]]></ST>
+      </Implementation>
+    </Action>
+    <Method Name="BuildString" Id="{ca77eff2-213f-461b-8f4b-842771dfc69c}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD BuildString : BOOL
+VAR_INPUT
+	psString	:	POINTER TO STRING;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[AddNullChar();
+MEMCPY( psString, ADR(bBuffer), udiIndex );]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="CheckFinalLength" Id="{5bfcfec1-41c0-4b4b-9efc-cdfedbb5d1d9}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD CheckFinalLength : BOOL
+VAR_INPUT
+	udiLen	:	UDINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CheckFinalLength	:=	(udiIndex + udiLen) < PARAMETERS.uiMaxCharacters;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="CheckLength" Id="{c6856b6b-f1b0-4936-a873-24f2736990c8}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD CheckLength : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CheckLength	:=	CheckFinalLength(0);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="CheckMinimumLength" Id="{a3deb16d-1c84-436e-9e26-91d82feaafb3}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD CheckMinimumLength : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CheckMinimumLength	:=	udiIndex > 0;]]></ST>
+      </Implementation>
+    </Method>
+    <Action Name="DecrementIndex" Id="{80622eaf-5301-41c9-a0ec-d5673140fae2}" FolderPath="ACTIONs\">
+      <Implementation>
+        <ST><![CDATA[IF CheckMinimumLength() THEN
+	udiIndex	:=	udiIndex - 1;
+END_IF]]></ST>
+      </Implementation>
+    </Action>
+    <Method Name="DeleteChars" Id="{9567052d-08aa-4840-a672-7ff69cd94b0e}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD DeleteChars : BOOL
+VAR_INPUT
+	udiNumChars	:	UDINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[udiNumChars	:=	MIN(udiNumChars, udiIndex);
+MEMSET(pbBuffer + (udiIndex - udiNumChars), 0, udiNumChars);
+udiIndex := udiIndex - udiNumChars;]]></ST>
+      </Implementation>
+    </Method>
+    <Action Name="IncrementIndex" Id="{1e105e41-e1b3-4291-b4f5-b3ad8bc1f44d}" FolderPath="ACTIONs\">
+      <Implementation>
+        <ST><![CDATA[IncrementIndexVariable(1);]]></ST>
+      </Implementation>
+    </Action>
+    <Method Name="IncrementIndexVariable" Id="{7f43a176-ec9b-446d-98cd-00989f7ef420}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD IncrementIndexVariable : BOOL
+VAR_INPUT
+	udiIncrement	:	UDINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[udiIndex	:=	udiIndex + udiIncrement;]]></ST>
+      </Implementation>
+    </Method>
+    <Action Name="ResetBuffer" Id="{6fd5ed2a-147e-4efd-a713-8e4977d508a1}" FolderPath="ACTIONs\">
+      <Implementation>
+        <ST><![CDATA[IF CheckMinimumLength() THEN
+	DecrementIndex();
+	MEMSET(	ADR(bBufferOld), 0, PARAMETERS.uiMaxCharacters);
+	MEMCPY( ADR(bBufferOld), ADR(bBuffer), udiIndexOld);
+	
+	ResetIndex();
+	MEMSET(	ADR(bBuffer), 0, PARAMETERS.uiMaxCharacters);
+END_IF]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="ResetIndex" Id="{0267ccdd-742e-4881-b501-77d47e764385}" FolderPath="ACTIONs\">
+      <Implementation>
+        <ST><![CDATA[udiIndex	:=	0;]]></ST>
+      </Implementation>
+    </Action>
+    <LineIds Name="FB_stringBuilder">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_stringBuilder.AddChar">
+      <LineId Id="33" Count="7" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_stringBuilder.AddCloseBracket">
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_stringBuilder.AddColon">
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_stringBuilder.AddComma">
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_stringBuilder.AddDollar">
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_stringBuilder.AddDot">
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_stringBuilder.AddDoubleQuote">
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_stringBuilder.AddKeyValue">
+      <LineId Id="3" Count="2" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_stringBuilder.AddNewLine">
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_stringBuilder.AddNullChar">
+      <LineId Id="2" Count="2" />
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_stringBuilder.AddOpenBracket">
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_stringBuilder.AddQuote">
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_stringBuilder.AddSemicolon">
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_stringBuilder.AddSpace">
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_stringBuilder.AddString">
+      <LineId Id="25" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="32" Count="1" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_stringBuilder.AddTab">
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_stringBuilder.AddUnderscore">
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_stringBuilder.BuildString">
+      <LineId Id="4" Count="0" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_stringBuilder.CheckFinalLength">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_stringBuilder.CheckLength">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_stringBuilder.CheckMinimumLength">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_stringBuilder.DecrementIndex">
+      <LineId Id="2" Count="0" />
+      <LineId Id="1" Count="0" />
+      <LineId Id="3" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_stringBuilder.DeleteChars">
+      <LineId Id="3" Count="1" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_stringBuilder.IncrementIndex">
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_stringBuilder.IncrementIndexVariable">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_stringBuilder.ResetBuffer">
+      <LineId Id="2" Count="6" />
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_stringBuilder.ResetIndex">
+      <LineId Id="1" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

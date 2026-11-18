@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="F_atan2" Id="{b2c16367-73dd-4a68-96c2-1c66916166e8}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION F_atan2 : REAL
+VAR_INPUT
+	rX	:	REAL;
+	rY	:	REAL;
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// CALCOLO L'ANGOLO CONOSCENDO COORDINATE X E Y
+IF rX > 0 THEN
+	F_atan2	:=	ATAN(rY / rX);
+ELSIF rX = 0 AND rY > 0 THEN
+	F_atan2	:=	LREAL_TO_REAL(CONSTANTS.PI / 2);
+ELSIF rX = 0 AND rY < 0 THEN
+	F_atan2	:=	- LREAL_TO_REAL(CONSTANTS.PI / 2);
+ELSIF rX < 0 AND rY >= 0 THEN
+	F_atan2	:=	LREAL_TO_REAL(ATAN(rY / rX) + CONSTANTS.PI);
+ELSIF rX < 0 AND rY < 0 THEN
+	F_atan2	:=	LREAL_TO_REAL(ATAN(rY / rX) - CONSTANTS.PI);
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="F_atan2">
+      <LineId Id="3" Count="10" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

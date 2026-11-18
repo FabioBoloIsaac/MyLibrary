@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <DUT Name="ST_TypeSizes" Id="{660decf1-01d2-4b79-8ef6-bc2b32316884}">
+    <Declaration><![CDATA[TYPE ST_TypeSizes :
+STRUCT
+	// MEMORIA
+	uiBIT		:	UINT	:=	SIZEOF(BIT);
+	uiByte		:	UINT	:=	SIZEOF(BYTE);
+	uiWord		:	UINT	:=	SIZEOF(WORD);
+	uiDWord		:	UINT	:=	SIZEOF(DWORD);
+	uiLWord		:	UINT	:=	SIZEOF(LWORD);
+	
+	// BOOL
+	uiBool		:	UINT	:=	SIZEOF(BOOL);
+	
+	// UINTERI
+	uiSUINT		:	UINT	:=	SIZEOF(SINT);
+	uiUSUINT	:	UINT	:=	SIZEOF(USINT);
+	uiUINT		:	UINT	:=	SIZEOF(UINT);
+	uiUUINT		:	UINT	:=	SIZEOF(UINT);
+	uiDUINT		:	UINT	:=	SIZEOF(DINT);
+	uiUDUINT	:	UINT	:=	SIZEOF(UDINT);
+	uiLUINT		:	UINT	:=	SIZEOF(LINT);
+	uiULUINT	:	UINT	:=	SIZEOF(ULINT);
+	
+	// REALI
+	uiReal		:	UINT	:=	SIZEOF(REAL);
+	uiLReal		:	UINT	:=	SIZEOF(LREAL);
+	
+	// STRINGE
+	
+	// TEMPI E DATE
+	uiTime		:	UINT	:=	SIZEOF(TIME);
+	uiLTime		:	UINT	:=	SIZEOF(LTIME);
+	uiDate		:	UINT	:=	SIZEOF(DATE);
+	
+	// MIE FUNCTION BLOCKS
+	uiStringBuilder	:	UINT	:=	SIZEOF(FB_stringBuilder);
+	uiTimer			:	UINT	:=	SIZEOF(FB_timer);
+	
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

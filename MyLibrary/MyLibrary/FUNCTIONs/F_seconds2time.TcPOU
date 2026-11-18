@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="F_seconds2time" Id="{9d168122-d3e8-4d44-b33a-12cef028da27}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION F_seconds2time : TIME
+VAR_INPUT
+	rSeconds	:	REAL;
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[F_seconds2time	:=	REAL_TO_TIME(rSeconds * CONVERSIONS.rSeconds2Time);]]></ST>
+    </Implementation>
+    <LineIds Name="F_seconds2time">
+      <LineId Id="7" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
