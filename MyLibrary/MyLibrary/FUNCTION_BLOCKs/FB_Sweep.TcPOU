@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="FB_Sweep" Id="{59b05527-a81a-46c0-8027-d759f6a264f9}" SpecialFunc="None">
+    <Declaration><![CDATA[// SWEEP SINUSOIDALE (CHIRP LINEARE) DI AMPIEZZA 1: la frequenza passa linearmente da
+// rStartFrequency a rEndFrequency in rDuration secondi, poi l'uscita resta a 0.
+// Uso: Initialize(...) una volta, Start() per partire, Step() a ogni ciclo.
+FUNCTION_BLOCK FB_Sweep
+VAR
+	// VALORI DI INIZIALIZZAZIONE
+	rStartFrequency	:	REAL;	// frequenza iniziale [Hz]
+	rEndFrequency	:	REAL;	// frequenza finale [Hz]
+	rDuration		:	REAL;	// durata dello sweep [s]
+	rSlope			:	REAL;	// variazione della frequenza [Hz/s]
+
+	// TIMER
+	fbTimer			:	FB_Timer;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+]]></ST>
+    </Implementation>
+    <Folder Name="ACTIONs" Id="{430fb45c-a939-46a0-9118-70ab8b1d3642}" />
+    <Folder Name="METHODs" Id="{5bc75862-e8d2-426f-9b88-9dc79260b55d}" />
+    <Method Name="ComputeFrequency" Id="{3e1a0425-0a5c-4887-ba37-1e1bfc692f05}" FolderPath="METHODs\">
+      <Declaration><![CDATA[// FREQUENZA ISTANTANEA [Hz] NEL PUNTO ATTUALE DELLO SWEEP
+METHOD ComputeFrequency : REAL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[ComputeFrequency	:=	F_InterpolateReal(
+	rX0	:=	0,
+	rX1	:=	rDuration,
+	rY0	:=	rStartFrequency,
+	rY1	:=	rEndFrequency,
+	rX	:=	fbTimer.ComputeElapsedSeconds()
+	);
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Initialize" Id="{4d178d43-3de9-4702-8bed-ac650e456d29}" FolderPath="METHODs\">
+      <Declaration><![CDATA[// IMPOSTA I PARAMETRI DELLO SWEEP.
+// Restituisce FALSE (e non cambia nulla) se la durata non è positiva.
+METHOD Initialize : BOOL
+VAR_INPUT
+	rInputStartFrequency	:	REAL;	// [Hz]
+	rInputEndFrequency		:	REAL;	// [Hz]
+	rInputDuration			:	REAL;	// [s]
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF rInputDuration <= 0 THEN
+	RETURN;
+END_IF
+
+rStartFrequency	:=	rInputStartFrequency;
+rEndFrequency	:=	rInputEndFrequency;
+rDuration		:=	rInputDuration;
+rSlope			:=	(rEndFrequency - rStartFrequency) / rDuration;
+
+fbTimer.ChangeTimer(F_SecondsToTime(rDuration));
+Initialize		:=	TRUE;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Action Name="Start" Id="{39be2f7c-ee33-4e4c-838b-79b47bf8f887}" FolderPath="ACTIONs\">
+      <Implementation>
+        <ST><![CDATA[// FA PARTIRE LO SWEEP DALL'INIZIO
+fbTimer.Reset();
+]]></ST>
+      </Implementation>
+    </Action>
+    <Method Name="Step" Id="{38c0a492-17f1-43cd-ad95-a22e148d11c4}" FolderPath="METHODs\">
+      <Declaration><![CDATA[// VALORE DELLO SWEEP NELL'ISTANTE ATTUALE (tra -1 e +1; 0 a sweep finito)
+METHOD Step : REAL
+VAR_INPUT
+END_VAR
+VAR
+	rTime	:	REAL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF fbTimer.VerifySelfElapsed() THEN
+	Step	:=	0;
+ELSE
+	rTime	:=	fbTimer.ComputeElapsedSeconds();
+	// FASE DEL CHIRP LINEARE: 2*PI*(f0*t + k/2*t^2) = PI*t*(2*f0 + k*t)
+	Step	:=	SIN(GVL_Constants.PI * rTime * (2 * rStartFrequency + rSlope * rTime));
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

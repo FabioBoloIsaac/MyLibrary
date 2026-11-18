@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="FB_StringBuilder_Test" Id="{2eb6b215-667d-43b2-994b-f6587487df7d}" SpecialFunc="None">
+    <Declaration><![CDATA[// TEST DI FB_StringBuilder
+FUNCTION_BLOCK FB_StringBuilder_Test EXTENDS TcUnit.FB_TestSuite
+VAR
+	fbAddChar	:	ML.FB_StringBuilder;
+	fbAddString	:	ML.FB_StringBuilder;
+	fbOverflow	:	ML.FB_StringBuilder;
+	fbBuild	:	ML.FB_StringBuilder;
+	fbKeyValue	:	ML.FB_StringBuilder;
+	fbDelete	:	ML.FB_StringBuilder;
+	fbReset	:	ML.FB_StringBuilder;
+	sResult	:	STRING(255);
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[AddChar();
+AddString();
+Overflow();
+BuildString();
+AddKeyValue();
+DeleteChars();
+ResetBuffer();
+]]></ST>
+    </Implementation>
+    <Folder Name="METHODs" Id="{214f9c16-c681-4302-912b-f8c23b3a5099}" />
+    <Method Name="AddChar" Id="{8cca30da-ad92-4682-8811-7b49f3a3f24e}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD PRIVATE AddChar
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('AddChar');
+
+AssertTrue(Condition := fbAddChar.AddChar(ML.E_Ascii.OpenParenthesis),	Message := 'AddChar');
+AssertTrue(Condition := fbAddChar.AddByte(65),								Message := 'AddByte (A)');
+AssertTrue(Condition := fbAddChar.AddChar(ML.E_Ascii.CloseParenthesis),	Message := 'AddChar');
+fbAddChar.BuildString(ADR(sResult), SIZEOF(sResult));
+AssertEquals_STRING(Expected := '(A)', Actual := sResult, Message := 'Contenuto');
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="AddKeyValue" Id="{11af943a-ae20-441f-bc5f-c1b91d65a0b0}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD PRIVATE AddKeyValue
+VAR
+	sKey	:	STRING	:=	'a';
+	sValue	:	STRING	:=	'1';
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('AddKeyValue');
+
+AssertTrue(Condition := fbKeyValue.AddKeyValue(ADR(sKey), ADR(sValue)),	Message := 'Chiave e valore validi');
+AssertFalse(Condition := fbKeyValue.AddKeyValue(0, ADR(sValue)),			Message := 'Chiave nulla');
+fbKeyValue.BuildString(ADR(sResult), SIZEOF(sResult));
+AssertEquals_STRING(Expected := 'a:1,', Actual := sResult, Message := 'Contenuto');
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="AddString" Id="{629bec3c-790b-43ef-a60e-aae46d71770d}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD PRIVATE AddString
+VAR
+	sText	:	STRING	:=	'ciao';
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('AddString');
+
+AssertTrue(Condition := fbAddString.AddString(ADR(sText)),	Message := 'Stringa valida');
+AssertFalse(Condition := fbAddString.AddString(0),			Message := 'Puntatore nullo');
+fbAddString.BuildString(ADR(sResult), SIZEOF(sResult));
+AssertEquals_STRING(Expected := 'ciao', Actual := sResult, Message := 'Contenuto');
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="BuildString" Id="{7bfc17aa-eeb7-412c-83c5-fedf606ae35e}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD PRIVATE BuildString
+VAR
+	sShort	:	STRING(10);
+	sText	:	STRING	:=	'ciao';
+	sLong	:	STRING	:=	' molto lungo';
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('BuildString');
+
+fbBuild.AddString(ADR(sText));
+AssertTrue(Condition := fbBuild.BuildString(ADR(sShort), SIZEOF(sShort)),	Message := 'Il testo entra nella destinazione');
+AssertEquals_STRING(Expected := 'ciao', Actual := sShort, Message := 'Contenuto');
+AssertTrue(Condition := fbBuild.BuildString(ADR(sShort), SIZEOF(sShort)),	Message := 'Seconda chiamata a BuildString');
+AssertEquals_STRING(Expected := 'ciao', Actual := sShort, Message := 'Contenuto dopo la seconda chiamata');
+
+fbBuild.AddString(ADR(sLong));
+AssertFalse(Condition := fbBuild.BuildString(ADR(sShort), SIZEOF(sShort)),	Message := 'Destinazione troppo piccola');
+AssertEquals_STRING(Expected := 'ciao', Actual := sShort, Message := 'La destinazione non deve essere toccata');
+AssertFalse(Condition := fbBuild.BuildString(0, 100),							Message := 'Destinazione nulla');
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="DeleteChars" Id="{119c1a69-f5f6-4ce6-ace8-a4b2ab0068ab}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD PRIVATE DeleteChars
+VAR
+	sText	:	STRING	:=	'abc';
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('DeleteChars');
+
+fbDelete.AddString(ADR(sText));
+AssertTrue(Condition := fbDelete.DeleteChars(1),	Message := 'Cancello 1 carattere su 3');
+fbDelete.BuildString(ADR(sResult), SIZEOF(sResult));
+AssertEquals_STRING(Expected := 'ab', Actual := sResult, Message := 'Contenuto dopo la prima cancellazione');
+AssertFalse(Condition := fbDelete.DeleteChars(5),	Message := 'Cancello 5 caratteri su 2');
+fbDelete.BuildString(ADR(sResult), SIZEOF(sResult));
+AssertEquals_STRING(Expected := '', Actual := sResult, Message := 'Contenuto dopo la seconda cancellazione');
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Overflow" Id="{52a0847b-2fae-4a3a-aa64-2a38962eb811}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD PRIVATE Overflow
+VAR
+	udiCount	:	UDINT;
+	bAllAdded	:	BOOL	:=	TRUE;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('Overflow');
+
+// IL BUFFER CONTIENE ESATTAMENTE MAX_CHARACTERS CARATTERI: IL SUCCESSIVO DEVE ESSERE RIFIUTATO
+FOR udiCount := 1 TO ML.GVL_Parameters.MAX_CHARACTERS DO
+	bAllAdded	:=	bAllAdded AND fbOverflow.AddChar(ML.E_Ascii.Space);
+END_FOR
+AssertTrue(Condition := bAllAdded,							Message := 'Buffer riempito fino al limite');
+AssertFalse(Condition := fbOverflow.AddChar(ML.E_Ascii.Space),	Message := 'Buffer pieno: AddChar deve restituire FALSE');
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ResetBuffer" Id="{e8c6bf7e-94d1-4b8d-81a2-a72fa340880d}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD PRIVATE ResetBuffer
+VAR
+	sText	:	STRING	:=	'abc';
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('ResetBuffer');
+
+fbReset.AddString(ADR(sText));
+fbReset.ResetBuffer();
+fbReset.BuildString(ADR(sResult), SIZEOF(sResult));
+AssertEquals_STRING(Expected := '', Actual := sResult, Message := 'Dopo ResetBuffer il testo deve essere vuoto');
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

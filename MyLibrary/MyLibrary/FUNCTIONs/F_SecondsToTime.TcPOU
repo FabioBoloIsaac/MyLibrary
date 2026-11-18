@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="F_SecondsToTime" Id="{9d168122-d3e8-4d44-b33a-12cef028da27}" SpecialFunc="None">
+    <Declaration><![CDATA[// CONVERTE SECONDI (REAL) IN TIME
+FUNCTION F_SecondsToTime : TIME
+VAR_INPUT
+	rSeconds	:	REAL;
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[F_SecondsToTime	:=	REAL_TO_TIME(rSeconds * GVL_Conversions.SECONDS_TO_TIME);
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

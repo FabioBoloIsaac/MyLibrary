@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <GVL Name="GVL_Conversions" Id="{11182d4b-a82b-4df1-a41f-27597d1f24fd}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL CONSTANT
+	// FATTORI DI CONVERSIONE TRA TIME (millisecondi) E SECONDI
+	TIME_TO_SECONDS	:	REAL	:=	0.001;
+	SECONDS_TO_TIME	:	REAL	:=	1000;
+END_VAR
+]]></Declaration>
+  </GVL>
+</TcPlcObject>

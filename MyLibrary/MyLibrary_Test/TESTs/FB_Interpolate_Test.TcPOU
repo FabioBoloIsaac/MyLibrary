@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="FB_Interpolate_Test" Id="{b5f1223c-306d-4836-be58-aaad2cd23d6f}" SpecialFunc="None">
+    <Declaration><![CDATA[// TEST DI F_InterpolateReal E F_InterpolateTime
+FUNCTION_BLOCK FB_Interpolate_Test EXTENDS TcUnit.FB_TestSuite
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[MidPoint();
+ClampBelow();
+ClampAbove();
+ReversedPoints();
+SamePoints();
+InterpolateTime();
+]]></ST>
+    </Implementation>
+    <Folder Name="METHODs" Id="{4b362aa6-55e9-45f5-9c01-14ba887c9087}" />
+    <Method Name="ClampAbove" Id="{1db38071-f896-4452-b84b-c4ac8ee972ef}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD PRIVATE ClampAbove
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('ClampAbove');
+
+AssertEquals_REAL(
+	Expected	:=	100,
+	Actual		:=	ML.F_InterpolateReal(rX0 := 0, rX1 := 10, rY0 := 0, rY1 := 100, rX := 20),
+	Delta		:=	0.0001,
+	Message		:=	'Dopo il secondo punto deve restituire rY1');
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ClampBelow" Id="{885a2c56-b4c0-4983-a35d-544ccd325ba8}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD PRIVATE ClampBelow
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('ClampBelow');
+
+AssertEquals_REAL(
+	Expected	:=	0,
+	Actual		:=	ML.F_InterpolateReal(rX0 := 0, rX1 := 10, rY0 := 0, rY1 := 100, rX := -5),
+	Delta		:=	0.0001,
+	Message		:=	'Prima del primo punto deve restituire rY0');
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="InterpolateTime" Id="{7d98041d-db87-4a3f-a958-3b25a25bd47a}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD PRIVATE InterpolateTime
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('InterpolateTime');
+
+AssertEquals_REAL(
+	Expected	:=	2.5,
+	Actual		:=	ML.F_InterpolateTime(tX0 := T#0S, tX1 := T#2S, rY0 := 0, rY1 := 10, tX := T#500MS),
+	Delta		:=	0.0001,
+	Message		:=	'Interpolazione con ascisse TIME');
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MidPoint" Id="{9571dd7e-cee6-424d-a637-bc25ce53b3ca}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD PRIVATE MidPoint
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('MidPoint');
+
+AssertEquals_REAL(
+	Expected	:=	50,
+	Actual		:=	ML.F_InterpolateReal(rX0 := 0, rX1 := 10, rY0 := 0, rY1 := 100, rX := 5),
+	Delta		:=	0.0001,
+	Message		:=	'Punto medio');
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ReversedPoints" Id="{71916f66-bbd2-441f-a353-19264d94b072}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD PRIVATE ReversedPoints
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('ReversedPoints');
+
+AssertEquals_REAL(
+	Expected	:=	25,
+	Actual		:=	ML.F_InterpolateReal(rX0 := 10, rX1 := 0, rY0 := 100, rY1 := 0, rX := 2.5),
+	Delta		:=	0.0001,
+	Message		:=	'Punti in ordine decrescente: interpolazione');
+AssertEquals_REAL(
+	Expected	:=	100,
+	Actual		:=	ML.F_InterpolateReal(rX0 := 10, rX1 := 0, rY0 := 100, rY1 := 0, rX := 20),
+	Delta		:=	0.0001,
+	Message		:=	'Punti in ordine decrescente: saturazione');
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="SamePoints" Id="{de014513-521a-4c60-8fe2-1865af573e25}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD PRIVATE SamePoints
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('SamePoints');
+
+AssertEquals_REAL(
+	Expected	:=	7,
+	Actual		:=	ML.F_InterpolateReal(rX0 := 3, rX1 := 3, rY0 := 7, rY1 := 9, rX := 5),
+	Delta		:=	0.0001,
+	Message		:=	'Con rX0 = rX1 deve restituire rY0');
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

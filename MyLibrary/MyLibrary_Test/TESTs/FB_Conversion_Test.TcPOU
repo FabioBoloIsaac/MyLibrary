@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="FB_Conversion_Test" Id="{9598820b-4ec5-4366-bc8e-dcb57e3e867a}" SpecialFunc="None">
+    <Declaration><![CDATA[// TEST DI F_TimeToSeconds E F_SecondsToTime
+FUNCTION_BLOCK FB_Conversion_Test EXTENDS TcUnit.FB_TestSuite
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[TimeToSeconds();
+SecondsToTime();
+]]></ST>
+    </Implementation>
+    <Folder Name="METHODs" Id="{781ef806-dbbf-4156-973a-77174c7fb02d}" />
+    <Method Name="SecondsToTime" Id="{1a5bf50d-42af-455b-82fe-89ee347ff27b}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD PRIVATE SecondsToTime
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('SecondsToTime');
+
+AssertEquals_TIME(
+	Expected	:=	T#2S250MS,
+	Actual		:=	ML.F_SecondsToTime(2.25),
+	Message		:=	'2,25 s');
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TimeToSeconds" Id="{141153eb-4b2f-4d65-88ac-1ba507bc60f2}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD PRIVATE TimeToSeconds
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('TimeToSeconds');
+
+AssertEquals_REAL(
+	Expected	:=	1.5,
+	Actual		:=	ML.F_TimeToSeconds(T#1S500MS),
+	Delta		:=	0.0001,
+	Message		:=	'1,5 s');
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

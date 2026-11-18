@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="F_InterpolateReal" Id="{16274142-fa99-4bd3-bf9d-b116ca3bc947}" SpecialFunc="None">
+    <Declaration><![CDATA[// INTERPOLAZIONE LINEARE TRA I PUNTI (rX0, rY0) E (rX1, rY1), CALCOLATA IN rX.
+// - Fuori dall'intervallo il risultato è saturato al valore dell'estremo più vicino (niente estrapolazione).
+// - Funziona anche con rX0 > rX1 (punti in ordine decrescente).
+// - Se rX0 = rX1 i due punti non definiscono una retta: restituisce rY0.
+FUNCTION F_InterpolateReal : REAL
+VAR_INPUT
+	rX0	:	REAL;	// ascissa del primo punto
+	rX1	:	REAL;	// ascissa del secondo punto
+	rY0	:	REAL;	// valore nel primo punto
+	rY1	:	REAL;	// valore nel secondo punto
+	rX	:	REAL;	// ascissa in cui calcolare il valore
+END_VAR
+VAR
+	rFraction	:	REAL;	// posizione di rX tra i due punti: 0 = in rX0, 1 = in rX1
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF rX0 = rX1 THEN
+	F_InterpolateReal	:=	rY0;
+	RETURN;
+END_IF
+
+// SATURANDO LA FRAZIONE TRA 0 E 1 IL RISULTATO RESTA TRA rY0 E rY1, QUALUNQUE SIA L'ORDINE DEI PUNTI
+rFraction	:=	F_Saturation(
+	rInput			:=	(rX - rX0) / (rX1 - rX0),
+	rMinimumValue	:=	0,
+	rMaximumValue	:=	1
+	);
+
+F_InterpolateReal	:=	rY0 + (rY1 - rY0) * rFraction;
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

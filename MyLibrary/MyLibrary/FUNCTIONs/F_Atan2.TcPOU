@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="F_Atan2" Id="{b2c16367-73dd-4a68-96c2-1c66916166e8}" SpecialFunc="None">
+    <Declaration><![CDATA[// ANGOLO [rad] DEL PUNTO (rX, rY), NELL'INTERVALLO (-PI, PI]. Restituisce 0 per il punto (0, 0).
+FUNCTION F_Atan2 : REAL
+VAR_INPUT
+	rX	:	REAL;
+	rY	:	REAL;
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// CALCOLO L'ANGOLO CONOSCENDO COORDINATE X E Y
+IF rX > 0 THEN
+	F_Atan2	:=	ATAN(rY / rX);
+ELSIF rX = 0 AND rY > 0 THEN
+	F_Atan2	:=	GVL_Constants.PI / 2;
+ELSIF rX = 0 AND rY < 0 THEN
+	F_Atan2	:=	- GVL_Constants.PI / 2;
+ELSIF rX < 0 AND rY >= 0 THEN
+	F_Atan2	:=	ATAN(rY / rX) + GVL_Constants.PI;
+ELSIF rX < 0 AND rY < 0 THEN
+	F_Atan2	:=	ATAN(rY / rX) - GVL_Constants.PI;
+END_IF
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

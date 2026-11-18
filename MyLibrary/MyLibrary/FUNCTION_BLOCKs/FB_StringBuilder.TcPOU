@@ -1,0 +1,230 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="FB_StringBuilder" Id="{26bce644-87e4-4374-b58f-9389bc582a26}" SpecialFunc="None">
+    <Declaration><![CDATA[// COSTRUISCE UNA STRINGA LUNGA (fino a GVL_Parameters.MAX_CHARACTERS caratteri) UN PEZZO ALLA VOLTA.
+// Uso: AddString/AddChar/AddKeyValue..., poi BuildString per copiare il risultato in una STRING,
+// poi ResetBuffer per ricominciare.
+// Valori di ritorno BOOL: TRUE = operazione eseguita, FALSE = non eseguita (spazio insufficiente
+// o argomento non valido; in questo caso il buffer NON viene modificato).
+FUNCTION_BLOCK FB_StringBuilder
+VAR_INPUT
+END_VAR
+VAR
+	abyBuffer		:	ARRAY[0..GVL_Parameters.MAX_CHARACTERS - 1] OF BYTE;	// testo in costruzione (senza terminatore)
+	abyBufferOld	:	ARRAY[0..GVL_Parameters.MAX_CHARACTERS - 1] OF BYTE;	// copia del testo salvata da ResetBuffer
+	udiIndex		:	UDINT;	// caratteri presenti in abyBuffer = posizione del prossimo carattere
+	udiIndexOld		:	UDINT;	// caratteri presenti in abyBufferOld
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+]]></ST>
+    </Implementation>
+    <Folder Name="ACTIONs" Id="{99776992-d8a0-4ed4-aa61-350cfed19f86}" />
+    <Folder Name="METHODs" Id="{9a2113b2-3380-4328-be6b-be03ed0cc5a6}" />
+    <Method Name="AddByte" Id="{d210260a-8584-484e-8144-e0cefa32a190}" FolderPath="METHODs\">
+      <Declaration><![CDATA[// AGGIUNGE IN CODA UN BYTE QUALSIASI. Restituisce TRUE se c'era spazio.
+METHOD AddByte : BOOL
+VAR_INPUT
+	byValue	:	BYTE;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF CheckFinalLength(1) THEN
+	abyBuffer[udiIndex]	:=	byValue;
+	IncrementIndexVariable(1);
+	AddByte	:=	TRUE;
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="AddChar" Id="{acb1b8e0-0207-4f46-8378-b68a295cf363}" FolderPath="METHODs\">
+      <Declaration><![CDATA[// AGGIUNGE IN CODA UN CARATTERE DELL'ELENCO E_Ascii, es. AddChar(E_Ascii.Comma).
+// Restituisce TRUE se c'era spazio.
+METHOD AddChar : BOOL
+VAR_INPUT
+	eChar	:	E_Ascii;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[AddChar	:=	AddByte(TO_BYTE(eChar));
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="AddKeyValue" Id="{ea0220f5-ed5d-41e8-9b72-147e94feed33}" FolderPath="METHODs\">
+      <Declaration><![CDATA[// AGGIUNGE IN CODA "chiave:valore," (TUTTO O NIENTE).
+// Restituisce FALSE, senza aggiungere nulla, se manca spazio o un puntatore è nullo.
+METHOD AddKeyValue : BOOL
+VAR_INPUT
+	psKey	:	POINTER TO STRING;
+	psValue	:	POINTER TO STRING;
+END_VAR
+VAR
+	udiNeeded	:	UDINT;	// caratteri necessari in totale
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF psKey = 0 OR psValue = 0 THEN
+	RETURN;
+END_IF
+
+// CHIAVE + ':' + VALORE + ','
+udiNeeded	:=	DINT_TO_UDINT(LEN2(psKey) + LEN2(psValue)) + 2;
+IF CheckFinalLength(udiNeeded) THEN
+	AddString(psKey);
+	AddChar(E_Ascii.Colon);
+	AddString(psValue);
+	AddChar(E_Ascii.Comma);
+	AddKeyValue	:=	TRUE;
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="AddString" Id="{595b4d96-b597-449d-9435-3e7e82a579a8}" FolderPath="METHODs\">
+      <Declaration><![CDATA[// AGGIUNGE IN CODA UNA STRINGA (TUTTO O NIENTE), es. AddString(ADR(sTesto)).
+// Restituisce FALSE, senza aggiungere nulla, se manca spazio o il puntatore è nullo.
+METHOD AddString : BOOL
+VAR_INPUT
+	psString		:	POINTER TO STRING;
+END_VAR
+VAR
+	udiLen	:	UDINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF psString = 0 THEN
+	RETURN;
+END_IF
+
+udiLen	:=	DINT_TO_UDINT(LEN2(psString));
+IF CheckFinalLength(udiLen) THEN
+	// ADR(abyBuffer) + udiIndex = indirizzo del primo byte libero
+	MEMCPY(ADR(abyBuffer) + udiIndex, psString, udiLen);
+	IncrementIndexVariable(udiLen);
+	AddString	:=	TRUE;
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="BuildString" Id="{ca77eff2-213f-461b-8f4b-842771dfc69c}" FolderPath="METHODs\">
+      <Declaration><![CDATA[// COPIA IL TESTO COSTRUITO (CON TERMINATORE) NELLA STRINGA DI DESTINAZIONE, es.
+//     fbBuilder.BuildString(ADR(sResult), SIZEOF(sResult));
+// Restituisce FALSE, senza scrivere nulla, se la destinazione è nulla o troppo piccola.
+// Il buffer non viene modificato: si può chiamare più volte.
+METHOD BuildString : BOOL
+VAR_INPUT
+	psString		:	POINTER TO STRING;	// stringa di destinazione
+	udiStringSize	:	UDINT;				// SIZEOF della stringa di destinazione (terminatore compreso)
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[// SERVONO udiIndex BYTE PER IL TESTO + 1 PER IL TERMINATORE
+IF psString = 0 OR udiIndex + 1 > udiStringSize THEN
+	RETURN;
+END_IF
+
+MEMCPY(psString, ADR(abyBuffer), udiIndex);
+MEMSET(psString + udiIndex, 0, 1);	// terminatore di fine stringa
+BuildString	:=	TRUE;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="CheckFinalLength" Id="{5bfcfec1-41c0-4b4b-9efc-cdfedbb5d1d9}" FolderPath="METHODs\">
+      <Declaration><![CDATA[// TRUE SE NEL BUFFER C'È SPAZIO PER ALTRI udiLen CARATTERI
+METHOD CheckFinalLength : BOOL
+VAR_INPUT
+	udiLen	:	UDINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CheckFinalLength	:=	(udiIndex + udiLen) <= GVL_Parameters.MAX_CHARACTERS;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="CheckLength" Id="{c6856b6b-f1b0-4936-a873-24f2736990c8}" FolderPath="METHODs\">
+      <Declaration><![CDATA[// TRUE SE NEL BUFFER C'È SPAZIO PER ALMENO UN ALTRO CARATTERE
+METHOD CheckLength : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CheckLength	:=	CheckFinalLength(1);
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="CheckMinimumLength" Id="{a3deb16d-1c84-436e-9e26-91d82feaafb3}" FolderPath="METHODs\">
+      <Declaration><![CDATA[// TRUE SE IL BUFFER CONTIENE ALMENO UN CARATTERE
+METHOD CheckMinimumLength : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CheckMinimumLength	:=	udiIndex > 0;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Action Name="DecrementIndex" Id="{80622eaf-5301-41c9-a0ec-d5673140fae2}" FolderPath="ACTIONs\">
+      <Implementation>
+        <ST><![CDATA[// TOGLIE L'ULTIMO CARATTERE (se c'è)
+IF CheckMinimumLength() THEN
+	udiIndex	:=	udiIndex - 1;
+END_IF
+]]></ST>
+      </Implementation>
+    </Action>
+    <Method Name="DeleteChars" Id="{9567052d-08aa-4840-a672-7ff69cd94b0e}" FolderPath="METHODs\">
+      <Declaration><![CDATA[// CANCELLA GLI ULTIMI udiNumChars CARATTERI.
+// Se ce ne sono meno, li cancella tutti e restituisce FALSE; altrimenti TRUE.
+METHOD DeleteChars : BOOL
+VAR_INPUT
+	udiNumChars	:	UDINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[DeleteChars	:=	udiNumChars <= udiIndex;
+udiNumChars	:=	MIN(udiNumChars, udiIndex);
+MEMSET(ADR(abyBuffer) + (udiIndex - udiNumChars), 0, udiNumChars);
+udiIndex	:=	udiIndex - udiNumChars;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Action Name="IncrementIndex" Id="{1e105e41-e1b3-4291-b4f5-b3ad8bc1f44d}" FolderPath="ACTIONs\">
+      <Implementation>
+        <ST><![CDATA[IncrementIndexVariable(1);
+]]></ST>
+      </Implementation>
+    </Action>
+    <Method Name="IncrementIndexVariable" Id="{7f43a176-ec9b-446d-98cd-00989f7ef420}" FolderPath="METHODs\">
+      <Declaration><![CDATA[// SPOSTA IN AVANTI L'INDICE DI udiIncrement POSIZIONI (uso interno: lo spazio va verificato prima)
+METHOD IncrementIndexVariable
+VAR_INPUT
+	udiIncrement	:	UDINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[udiIndex	:=	udiIndex + udiIncrement;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Action Name="ResetBuffer" Id="{6fd5ed2a-147e-4efd-a713-8e4977d508a1}" FolderPath="ACTIONs\">
+      <Implementation>
+        <ST><![CDATA[// SALVA IL TESTO ATTUALE IN abyBufferOld E SVUOTA IL BUFFER
+IF CheckMinimumLength() THEN
+	udiIndexOld	:=	udiIndex;
+	MEMSET(ADR(abyBufferOld), 0, SIZEOF(abyBufferOld));
+	MEMCPY(ADR(abyBufferOld), ADR(abyBuffer), udiIndexOld);
+
+	ResetIndex();
+	MEMSET(ADR(abyBuffer), 0, SIZEOF(abyBuffer));
+END_IF
+]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="ResetIndex" Id="{0267ccdd-742e-4881-b501-77d47e764385}" FolderPath="ACTIONs\">
+      <Implementation>
+        <ST><![CDATA[udiIndex	:=	0;
+]]></ST>
+      </Implementation>
+    </Action>
+  </POU>
+</TcPlcObject>

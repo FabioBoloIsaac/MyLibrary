@@ -18,7 +18,7 @@
     <Company>FabioBolognesi</Company>
     <Released>false</Released>
     <Title>MyLibrary</Title>
-    <ProjectVersion>0.0.0.0</ProjectVersion>
+    <ProjectVersion>0.1.0.0</ProjectVersion>
     <DefaultNamespace>ML</DefaultNamespace>
     <Author>Fabio Bolognesi</Author>
     <Placeholder>MyLibrary</Placeholder>
@@ -52,42 +52,45 @@
     </PlaceholderReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FUNCTION_BLOCKs\FB_stringBuilder.TcPOU">
+    <Compile Include="ENUMERATIONs\E_Ascii.TcDUT">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FUNCTION_BLOCKs\FB_sweep.TcPOU">
+    <Compile Include="FUNCTION_BLOCKs\FB_StringBuilder.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FUNCTION_BLOCKs\FB_timer.TcPOU">
+    <Compile Include="FUNCTION_BLOCKs\FB_Sweep.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FUNCTIONs\F_atan2.TcPOU">
+    <Compile Include="FUNCTION_BLOCKs\FB_Timer.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FUNCTIONs\F_interpolateReal.TcPOU">
+    <Compile Include="FUNCTIONs\F_Atan2.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FUNCTIONs\F_interpolateTime.TcPOU">
+    <Compile Include="FUNCTIONs\F_InterpolateReal.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FUNCTIONs\F_saturation.TcPOU">
+    <Compile Include="FUNCTIONs\F_InterpolateTime.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FUNCTIONs\F_time2seconds.TcPOU">
+    <Compile Include="FUNCTIONs\F_Saturation.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FUNCTIONs\F_seconds2time.TcPOU">
+    <Compile Include="FUNCTIONs\F_SecondsToTime.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GLOBAL_VARIABLEs\CONSTANTS.TcGVL">
+    <Compile Include="FUNCTIONs\F_TimeToSeconds.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GLOBAL_VARIABLEs\GVL_Constants.TcGVL">
       <SubType>Code</SubType>
       <LinkAlways>true</LinkAlways>
     </Compile>
-    <Compile Include="GLOBAL_VARIABLEs\CONVERSIONS.TcGVL">
+    <Compile Include="GLOBAL_VARIABLEs\GVL_Conversions.TcGVL">
       <SubType>Code</SubType>
       <LinkAlways>true</LinkAlways>
     </Compile>
-    <Compile Include="GLOBAL_VARIABLEs\PARAMETERs.TcGVL">
+    <Compile Include="GLOBAL_VARIABLEs\GVL_Parameters.TcGVL">
       <SubType>Code</SubType>
       <LinkAlways>true</LinkAlways>
     </Compile>

@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="F_InterpolateTime" Id="{148c1805-e80b-47f2-bb0d-8ebe7a71cd82}" SpecialFunc="None">
+    <Declaration><![CDATA[// COME F_InterpolateReal, MA CON LE ASCISSE DI TIPO TIME
+FUNCTION F_InterpolateTime : REAL
+VAR_INPUT
+	tX0	:	TIME;	// istante del primo punto
+	tX1	:	TIME;	// istante del secondo punto
+	rY0	:	REAL;	// valore nel primo punto
+	rY1	:	REAL;	// valore nel secondo punto
+	tX	:	TIME;	// istante in cui calcolare il valore
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[F_InterpolateTime	:=	F_InterpolateReal(
+	rX0	:=	F_TimeToSeconds(tX0),
+	rX1	:=	F_TimeToSeconds(tX1),
+	rY0	:=	rY0,
+	rY1	:=	rY1,
+	rX	:=	F_TimeToSeconds(tX)
+	);
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

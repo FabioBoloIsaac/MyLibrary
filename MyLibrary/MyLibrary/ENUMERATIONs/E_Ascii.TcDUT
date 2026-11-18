@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <DUT Name="E_Ascii" Id="{66f0c668-d121-4d7a-8397-a1448512f529}">
+    <Declaration><![CDATA[// CODICI ASCII DEI CARATTERI PIÙ USATI, DA PASSARE A FB_StringBuilder.AddChar.
+// Esempio: fbBuilder.AddChar(E_Ascii.Comma);
+// Per aggiungere un carattere: una riga "Nome := codice," (codici su https://www.asciitable.com).
+{attribute 'qualified_only'}
+{attribute 'strict'}
+TYPE E_Ascii :
+(
+	Null				:=	0,		// fine stringa
+	Tab					:=	9,		// tabulazione ($T)
+	LineFeed			:=	10,		// a capo ($N)
+	CarriageReturn		:=	13,		// ritorno carrello ($R)
+	Space				:=	32,		// spazio
+	DoubleQuote			:=	34,		// "
+	Hash				:=	35,		// #
+	Dollar				:=	36,		// $
+	Quote				:=	39,		// '
+	OpenParenthesis		:=	40,		// (
+	CloseParenthesis	:=	41,		// )
+	Comma				:=	44,		// ,
+	Minus				:=	45,		// -
+	Dot					:=	46,		// .
+	Slash				:=	47,		// /
+	Colon				:=	58,		// :
+	Semicolon			:=	59,		// ;
+	Equal				:=	61,		// =
+	OpenSquareBracket	:=	91,		// [
+	Backslash			:=	92,		// \
+	CloseSquareBracket	:=	93,		// ]
+	Underscore			:=	95,		// _
+	OpenBrace			:=	123,	// parentesi graffa aperta
+	CloseBrace			:=	125		// parentesi graffa chiusa
+) BYTE;
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

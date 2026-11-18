@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <FileVersion>1.0.0.0</FileVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{e62de475-ffd7-4240-8bfd-3971a3e91e2e}</ProjectGuid>
+    <SubObjectsSortedByName>True</SubObjectsSortedByName>
+    <DownloadApplicationInfo>true</DownloadApplicationInfo>
+    <WriteProductVersion>true</WriteProductVersion>
+    <GenerateTpy>false</GenerateTpy>
+    <Name>MyLibrary_Test</Name>
+    <ProgramVersion>3.1.4023.0</ProgramVersion>
+    <Application>{f127b6e9-4750-4bba-a3dd-fb13b230370d}</Application>
+    <TypeSystem>{b05db74e-cae0-4adf-9262-c3f6760f4228}</TypeSystem>
+    <Implicit_Task_Info>{861bc239-5560-477e-8793-123a70550fa3}</Implicit_Task_Info>
+    <Implicit_KindOfTask>{ab14139f-b4f5-4f80-bce2-0f364d14ab5a}</Implicit_KindOfTask>
+    <Implicit_Jitter_Distribution>{45746eb3-1e65-4c7e-8995-2c03ea0b3cd8}</Implicit_Jitter_Distribution>
+    <LibraryReferences>{2622fe8f-4033-4d19-8e20-4dc52b622f58}</LibraryReferences>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="PROGRAMs" />
+    <Folder Include="TESTs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PlaceholderReference Include="MyLibrary">
+      <DefaultResolution>MyLibrary, * (FabioBolognesi)</DefaultResolution>
+      <Namespace>ML</Namespace>
+    </PlaceholderReference>
+    <PlaceholderReference Include="TcUnit">
+      <DefaultResolution>TcUnit, * (www.tcunit.org)</DefaultResolution>
+      <Namespace>TcUnit</Namespace>
+    </PlaceholderReference>
+    <PlaceholderReference Include="Tc2_Standard">
+      <DefaultResolution>Tc2_Standard, * (Beckhoff Automation GmbH)</DefaultResolution>
+      <Namespace>Tc2_Standard</Namespace>
+    </PlaceholderReference>
+    <PlaceholderReference Include="Tc2_System">
+      <DefaultResolution>Tc2_System, * (Beckhoff Automation GmbH)</DefaultResolution>
+      <Namespace>Tc2_System</Namespace>
+    </PlaceholderReference>
+    <PlaceholderReference Include="Tc3_Module">
+      <DefaultResolution>Tc3_Module, * (Beckhoff Automation GmbH)</DefaultResolution>
+      <Namespace>Tc3_Module</Namespace>
+    </PlaceholderReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="PlcTask.TcTTO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PROGRAMs\MAIN.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TESTs\FB_Conversion_Test.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TESTs\FB_Interpolate_Test.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TESTs\FB_Math_Test.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TESTs\FB_StringBuilder_Test.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TESTs\FB_Sweep_Test.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TESTs\FB_Timer_Test.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+</Project>

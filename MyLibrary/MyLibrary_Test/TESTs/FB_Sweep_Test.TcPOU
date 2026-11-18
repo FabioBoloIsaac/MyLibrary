@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="FB_Sweep_Test" Id="{56b93290-119f-4994-afe0-f203757bddb4}" SpecialFunc="None">
+    <Declaration><![CDATA[// TEST DI FB_Sweep
+FUNCTION_BLOCK FB_Sweep_Test EXTENDS TcUnit.FB_TestSuite
+VAR
+	fbInvalid	:	ML.FB_Sweep;
+	fbStart		:	ML.FB_Sweep;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[InitializeRejectsZeroDuration();
+StartValues();
+]]></ST>
+    </Implementation>
+    <Folder Name="METHODs" Id="{20525e6e-ad39-421e-b885-71e4c8689f2a}" />
+    <Method Name="InitializeRejectsZeroDuration" Id="{d3f31029-2439-40d9-b6be-1a0b811e10ab}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD PRIVATE InitializeRejectsZeroDuration
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('InitializeRejectsZeroDuration');
+
+AssertFalse(
+	Condition	:=	fbInvalid.Initialize(rInputStartFrequency := 1, rInputEndFrequency := 10, rInputDuration := 0),
+	Message		:=	'Durata nulla: Initialize deve restituire FALSE');
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="StartValues" Id="{066335fb-1d36-4c9c-a8a7-f81085a0f471}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD PRIVATE StartValues
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('StartValues');
+
+AssertTrue(
+	Condition	:=	fbStart.Initialize(rInputStartFrequency := 1, rInputEndFrequency := 10, rInputDuration := 5),
+	Message		:=	'Parametri validi: Initialize deve restituire TRUE');
+fbStart.Start();
+// APPENA PARTITO: FREQUENZA = FREQUENZA INIZIALE E USCITA QUASI NULLA (seno di un angolo piccolo)
+AssertEquals_REAL(Expected := 1,	Actual := fbStart.ComputeFrequency(),	Delta := 0.1,	Message := 'Frequenza iniziale');
+AssertEquals_REAL(Expected := 0,	Actual := fbStart.Step(),				Delta := 0.1,	Message := 'Uscita iniziale');
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

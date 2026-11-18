@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <GVL Name="GVL_Parameters" Id="{8cad006c-3ee1-48a6-a108-3bece3a01021}" ParameterList="True">
+    <Declaration><![CDATA[{attribute 'global_init_slot' := '40001'}
+{attribute 'qualified_only'}
+VAR_GLOBAL CONSTANT
+	// CARATTERI MASSIMI PER STRINGHE (dimensione del buffer di FB_StringBuilder).
+	// È una "parameter list": il progetto che usa la libreria può cambiarne il valore
+	// dal Library Manager senza modificare la libreria.
+	MAX_CHARACTERS	:	UINT	:=	5000;
+END_VAR
+]]></Declaration>
+  </GVL>
+</TcPlcObject>

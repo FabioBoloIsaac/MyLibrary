@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="FB_Math_Test" Id="{0c8f4004-c0be-4efa-93d3-de707381427f}" SpecialFunc="None">
+    <Declaration><![CDATA[// TEST DI F_Saturation E F_Atan2
+FUNCTION_BLOCK FB_Math_Test EXTENDS TcUnit.FB_TestSuite
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[Saturation();
+Atan2Quadrants();
+]]></ST>
+    </Implementation>
+    <Folder Name="METHODs" Id="{ae155db8-aa27-4663-8031-f9375c689651}" />
+    <Method Name="Atan2Quadrants" Id="{fae99994-72e5-442a-b541-4212b6f95f0d}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD PRIVATE Atan2Quadrants
+VAR
+	rPi	:	REAL	:=	ML.GVL_Constants.PI;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('Atan2Quadrants');
+
+AssertEquals_REAL(Expected := rPi / 4,		Actual := ML.F_Atan2(rX := 1,	rY := 1),	Delta := 0.0001, Message := 'Primo quadrante');
+AssertEquals_REAL(Expected := 3 * rPi / 4,	Actual := ML.F_Atan2(rX := -1,	rY := 1),	Delta := 0.0001, Message := 'Secondo quadrante');
+AssertEquals_REAL(Expected := -3 * rPi / 4,	Actual := ML.F_Atan2(rX := -1,	rY := -1),	Delta := 0.0001, Message := 'Terzo quadrante');
+AssertEquals_REAL(Expected := -rPi / 4,		Actual := ML.F_Atan2(rX := 1,	rY := -1),	Delta := 0.0001, Message := 'Quarto quadrante');
+AssertEquals_REAL(Expected := rPi / 2,		Actual := ML.F_Atan2(rX := 0,	rY := 1),	Delta := 0.0001, Message := 'Asse Y positivo');
+AssertEquals_REAL(Expected := 0,			Actual := ML.F_Atan2(rX := 0,	rY := 0),	Delta := 0.0001, Message := 'Origine');
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Saturation" Id="{7ae92cdd-e1da-4620-b436-f74fee041426}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD PRIVATE Saturation
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('Saturation');
+
+AssertEquals_REAL(Expected := 5,	Actual := ML.F_Saturation(rInput := 5,	rMinimumValue := 0, rMaximumValue := 10), Delta := 0.0001, Message := 'Valore interno');
+AssertEquals_REAL(Expected := 0,	Actual := ML.F_Saturation(rInput := -3,	rMinimumValue := 0, rMaximumValue := 10), Delta := 0.0001, Message := 'Sotto il minimo');
+AssertEquals_REAL(Expected := 10,	Actual := ML.F_Saturation(rInput := 12,	rMinimumValue := 0, rMaximumValue := 10), Delta := 0.0001, Message := 'Sopra il massimo');
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

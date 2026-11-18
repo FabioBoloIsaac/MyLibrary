@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="FB_Timer_Test" Id="{c74504a1-f754-4e83-a888-25eac838705e}" SpecialFunc="None">
+    <Declaration><![CDATA[// TEST DI FB_Timer
+FUNCTION_BLOCK FB_Timer_Test EXTENDS TcUnit.FB_TestSuite
+VAR
+	fbElapsed	:	ML.FB_Timer;
+	fbSelf		:	ML.FB_Timer;
+	fbReset		:	ML.FB_Timer;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[VerifyElapsed();
+VerifySelfElapsed();
+ResetCondition();
+]]></ST>
+    </Implementation>
+    <Folder Name="METHODs" Id="{5ce43d5c-5da5-45c1-a934-98a1346bfd4f}" />
+    <Method Name="ResetCondition" Id="{a2714dce-b0c1-452a-bec5-7a3f58e3825d}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD PRIVATE ResetCondition
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('ResetCondition');
+
+fbReset.ResetWithOffset(T#5S);
+AssertFalse(Condition := fbReset.ResetCondition(FALSE),	Message := 'Condizione FALSE: nessun reset');
+AssertTrue(Condition := fbReset.VerifyElapsed(T#4S),		Message := 'Senza reset il tempo trascorso resta 5 s');
+AssertTrue(Condition := fbReset.ResetCondition(TRUE),		Message := 'Condizione TRUE: reset eseguito');
+AssertFalse(Condition := fbReset.VerifyElapsed(T#1S),		Message := 'Dopo il reset il tempo riparte da 0');
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="VerifyElapsed" Id="{0aa4564d-23e8-4f55-a3cc-fe4d3601d0c0}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD PRIVATE VerifyElapsed
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('VerifyElapsed');
+
+fbElapsed.ResetWithOffset(T#2S);
+AssertTrue(Condition := fbElapsed.VerifyElapsed(T#1S),	Message := 'Sono passati 2 s: 1 s deve risultare trascorso');
+AssertFalse(Condition := fbElapsed.VerifyElapsed(T#10S),	Message := 'Sono passati 2 s: 10 s non devono risultare trascorsi');
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="VerifySelfElapsed" Id="{0e1758b8-3b8d-40f6-ab70-ec4d2cb5b193}" FolderPath="METHODs\">
+      <Declaration><![CDATA[METHOD PRIVATE VerifySelfElapsed
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('VerifySelfElapsed');
+
+fbSelf.ResetWithOffset(T#2S);
+fbSelf.ChangeTimer(T#1S);
+AssertTrue(Condition := fbSelf.VerifySelfElapsed(),	Message := 'Durata 1 s, trascorsi 2 s');
+fbSelf.ChangeTimer(T#10S);
+AssertFalse(Condition := fbSelf.VerifySelfElapsed(),	Message := 'Durata 10 s, trascorsi 2 s');
+
+TEST_FINISHED();
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="MAIN" Id="{cb003da4-fc20-4982-a5f6-8439d5e0ab52}" SpecialFunc="None">
+    <Declaration><![CDATA[// PROGRAMMA DEI TEST: basta dichiarare un'istanza di ogni test suite e chiamare TcUnit.RUN().
+// Per aggiungere una suite: crearla in TESTs (EXTENDS TcUnit.FB_TestSuite) e dichiararla qui.
+PROGRAM MAIN
+VAR
+	fbInterpolateTest		:	FB_Interpolate_Test;
+	fbMathTest				:	FB_Math_Test;
+	fbConversionTest		:	FB_Conversion_Test;
+	fbTimerTest				:	FB_Timer_Test;
+	fbSweepTest				:	FB_Sweep_Test;
+	fbStringBuilderTest		:	FB_StringBuilder_Test;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[TcUnit.RUN();
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

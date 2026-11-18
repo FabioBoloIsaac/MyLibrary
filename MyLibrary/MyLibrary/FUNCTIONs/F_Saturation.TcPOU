@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
-  <POU Name="F_saturation" Id="{c4a9c70a-393f-4194-8b08-98fce22d6591}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION F_saturation : REAL
+  <POU Name="F_Saturation" Id="{c4a9c70a-393f-4194-8b08-98fce22d6591}" SpecialFunc="None">
+    <Declaration><![CDATA[// LIMITA rInput NELL'INTERVALLO [rMinimumValue, rMaximumValue]
+FUNCTION F_Saturation : REAL
 VAR_INPUT
 	rInput			:	REAL;
 	rMinimumValue	:	REAL;
@@ -12,11 +13,8 @@ END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[// ESEGUO UNA SATURAZIONE DEL VALORE IN INGRESSO
-F_saturation	:=	MAX(rMinimumValue, MIN(rMaximumValue, rInput));]]></ST>
+F_Saturation	:=	MAX(rMinimumValue, MIN(rMaximumValue, rInput));
+]]></ST>
     </Implementation>
-    <LineIds Name="F_saturation">
-      <LineId Id="3" Count="0" />
-      <LineId Id="2" Count="0" />
-    </LineIds>
   </POU>
 </TcPlcObject>
