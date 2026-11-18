@@ -2,12 +2,12 @@
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
   <GVL Name="CONSTANTS" Id="{89c24cc0-742b-4484-afaa-4b5910767eb5}">
     <Declaration><![CDATA[{attribute 'qualified_only'}
-VAR_GLOBAL
+VAR_GLOBAL CONSTANT
 	// ACCELERAZIONE DI GRAVITà
-	G	:	REAL	:=	9.8066;
+	G	:	REAL	:=	9.80665;
 	
 	// PI GRECO
-	PI	:	REAL	:=	3.1416;
+	PI	:	REAL	:=	3.141592;
 	
 END_VAR]]></Declaration>
   </GVL>

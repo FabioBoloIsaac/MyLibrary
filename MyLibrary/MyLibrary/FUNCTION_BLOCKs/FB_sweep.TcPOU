@@ -63,7 +63,6 @@ VAR_INPUT
 END_VAR
 VAR
 	rTime	:	REAL;
-	rFreq	:	REAL;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -71,14 +70,8 @@ END_VAR
 	Step	:=	0;
 ELSE
 	rTime	:=	fbTimer.ComputeElapsedSeconds();
-	rFreq	:=	ComputeFrequency();
-	Step	:=	SIN(CONSTANTS.PI * rTime * (2 * rStartFreq + rK + rTime));
+	Step	:=	SIN(CONSTANTS.PI * rTime * (2 * rStartFreq + rK * rTime));
 END_IF
-Step	:=	F_saturation(
-	rInput			:=	Step,
-	rMinimumValue	:=	-1,
-	rMaximumValue	:=	+1
-	);
 ]]></ST>
       </Implementation>
     </Method>
@@ -103,10 +96,9 @@ Step	:=	F_saturation(
     <LineIds Name="FB_sweep.Step">
       <LineId Id="18" Count="1" />
       <LineId Id="23" Count="0" />
-      <LineId Id="25" Count="1" />
+      <LineId Id="25" Count="0" />
       <LineId Id="24" Count="0" />
       <LineId Id="20" Count="0" />
-      <LineId Id="27" Count="4" />
       <LineId Id="15" Count="0" />
     </LineIds>
   </POU>

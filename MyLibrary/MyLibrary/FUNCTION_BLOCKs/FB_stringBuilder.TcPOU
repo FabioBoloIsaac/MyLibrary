@@ -25,7 +25,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF CheckLength THEN
+        <ST><![CDATA[IF CheckLength() THEN
 	bBuffer[udiIndex]	:=	byChar;
 	AddChar			:=	TRUE;
 	IncrementIndex();
@@ -217,7 +217,7 @@ END_VAR
     <Action Name="ResetBuffer" Id="{6fd5ed2a-147e-4efd-a713-8e4977d508a1}" FolderPath="ACTIONs\">
       <Implementation>
         <ST><![CDATA[IF CheckMinimumLength() THEN
-	DecrementIndex();
+	udiIndexOld	:=	udiIndex - 1;
 	MEMSET(	ADR(bBufferOld), 0, PARAMETERS.uiMaxCharacters);
 	MEMCPY( ADR(bBufferOld), ADR(bBuffer), udiIndexOld);
 	

@@ -6,7 +6,7 @@ VAR_INPUT
 	tTimer		:	TIME;
 END_VAR
 VAR
-	tStartTime	:	TIME	:=	TIME() - tTime;
+	tStartTime	:	TIME	:=	TIME() - tTimer;
 END_VAR
 ]]></Declaration>
     <Implementation>
